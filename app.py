@@ -16,15 +16,23 @@ def hello_world():
     return render_template('index.html')
 
 
-@app.route('/test', methods=['POST'])
+@app.route('/analyse', methods=['POST'])
 def test():
     review = request.form['review']
     model = request.form['model']
 
     data = json.dumps({'text': str(review), 'token': "test"})
-    cnn_response = http_requests.post(url='https://yelp-classification-service.herokuapp.com/api/cnn', json=data)
-    # cnn_response = http_requests.post(url='http://127.0.0.1:5001/api/cnn', json=data)
-    return cnn_response.text
+    # cnn_response = http_requests.post(url='https://yelp-classification-service.herokuapp.com/api/cnn', json=data)
+    if model == 'CNN':
+        model_response = http_requests.post(url='http://127.0.0.1:5001/api/cnn', json=data)
+    elif model == 'RNN':
+        model_response = http_requests.post(url='http://127.0.0.1:5001/api/rnn', json=data)
+    elif model == 'Xgboost':
+        model_response = http_requests.post(url='http://127.0.0.1:5001/api/xgb', json=data)
+    elif model == 'Linreg':
+        model_response = http_requests.post(url='http://127.0.0.1:5001/api/lin', json=data)
+
+    return model_response.text
 
 
 if __name__ == '__main__':
